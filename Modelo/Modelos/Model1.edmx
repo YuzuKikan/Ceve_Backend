@@ -1,0 +1,548 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Image">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="src" Type="text" />
+          <Property Name="type" Type="int" />
+          <Property Name="created_at" Type="datetime" />
+          <Property Name="user_id" Type="int" />
+          <Property Name="borrado" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Profile">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="day_of_birth" Type="datetime" />
+          <Property Name="phone" Type="int" />
+          <Property Name="title" Type="varchar" MaxLength="255" />
+          <Property Name="bio" Type="varchar" MaxLength="255" />
+          <Property Name="public_email" Type="varchar" MaxLength="255" />
+          <Property Name="image_id" Type="int" />
+          <Property Name="redes_id" Type="int" />
+          <Property Name="user_id" Type="int" Nullable="false" />
+          <Property Name="borrado" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Redes">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="user_id" Type="int" />
+          <Property Name="youtube" Type="text" />
+          <Property Name="twitch" Type="text" />
+          <Property Name="kick" Type="varchar" MaxLength="255" />
+          <Property Name="twitter" Type="varchar" MaxLength="255" />
+          <Property Name="tiktok" Type="varchar" MaxLength="255" />
+          <Property Name="discord" Type="varchar" MaxLength="255" />
+          <Property Name="instagram" Type="varchar" MaxLength="255" />
+          <Property Name="facebook" Type="varchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="Rol">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="description" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Type_Image">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="description" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="varchar" MaxLength="50" />
+          <Property Name="lastname" Type="varchar" MaxLength="50" />
+          <Property Name="username" Type="varchar" MaxLength="50" />
+          <Property Name="email" Type="varchar" MaxLength="255" />
+          <Property Name="password" Type="varchar" MaxLength="60" />
+          <Property Name="code" Type="varchar" MaxLength="20" />
+          <Property Name="is_active" Type="bit" />
+          <Property Name="rol_id" Type="int" />
+          <Property Name="created_at" Type="datetime" />
+          <Property Name="borrado" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User1_User2">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="user1_id" Type="int" />
+          <Property Name="user2_id" Type="int" />
+          <Property Name="created_at" Type="datetime" />
+          <Property Name="borrado" Type="bit" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Profile_Image">
+          <End Role="Image" Type="Self.Image" Multiplicity="0..1" />
+          <End Role="Profile" Type="Self.Profile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Image">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Profile">
+              <PropertyRef Name="image_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Profile_Profile">
+          <End Role="Profile" Type="Self.Profile" Multiplicity="1" />
+          <End Role="Profile1" Type="Self.Profile" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Profile">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Profile1">
+              <PropertyRef Name="id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Profile_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Profile" Type="Self.Profile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Profile">
+              <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Redes_User">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="Redes" Type="Self.Redes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Redes">
+              <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_Rol">
+          <End Role="Rol" Type="Self.Rol" Multiplicity="0..1" />
+          <End Role="User" Type="Self.User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Rol">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="User">
+              <PropertyRef Name="rol_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User1_User2_User">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="User1_User2" Type="Self.User1_User2" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="User1_User2">
+              <PropertyRef Name="user1_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User1_User2_User1">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="User1_User2" Type="Self.User1_User2" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="User1_User2">
+              <PropertyRef Name="user2_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ModelStoreContainer">
+          <EntitySet Name="Image" EntityType="Self.Image" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Profile" EntityType="Self.Profile" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Redes" EntityType="Self.Redes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Rol" EntityType="Self.Rol" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Type_Image" EntityType="Self.Type_Image" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User1_User2" EntityType="Self.User1_User2" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Profile_Image" Association="Self.FK_Profile_Image">
+            <End Role="Image" EntitySet="Image" />
+            <End Role="Profile" EntitySet="Profile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Profile_Profile" Association="Self.FK_Profile_Profile">
+            <End Role="Profile" EntitySet="Profile" />
+            <End Role="Profile1" EntitySet="Profile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Profile_User" Association="Self.FK_Profile_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="Profile" EntitySet="Profile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Redes_User" Association="Self.FK_Redes_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="Redes" EntitySet="Redes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_Rol" Association="Self.FK_User_Rol">
+            <End Role="Rol" EntitySet="Rol" />
+            <End Role="User" EntitySet="User" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User1_User2_User" Association="Self.FK_User1_User2_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="User1_User2" EntitySet="User1_User2" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User1_User2_User1" Association="Self.FK_User1_User2_User1">
+            <End Role="User" EntitySet="User" />
+            <End Role="User1_User2" EntitySet="User1_User2" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Image">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="src" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="type" Type="Int32" />
+          <Property Name="created_at" Type="DateTime" Precision="3" />
+          <Property Name="user_id" Type="Int32" />
+          <Property Name="borrado" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Profile" Relationship="Self.FK_Profile_Image" FromRole="Image" ToRole="Profile" />
+        </EntityType>
+        <EntityType Name="Profile">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="day_of_birth" Type="DateTime" Precision="3" />
+          <Property Name="phone" Type="Int32" />
+          <Property Name="title" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="bio" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="public_email" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="image_id" Type="Int32" />
+          <Property Name="redes_id" Type="Int32" />
+          <Property Name="user_id" Type="Int32" Nullable="false" />
+          <Property Name="borrado" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Image" Relationship="Self.FK_Profile_Image" FromRole="Profile" ToRole="Image" />
+          <NavigationProperty Name="Profile1" Relationship="Self.FK_Profile_Profile" FromRole="Profile" ToRole="Profile1" />
+          <NavigationProperty Name="Profile2" Relationship="Self.FK_Profile_Profile" FromRole="Profile1" ToRole="Profile" />
+          <NavigationProperty Name="User" Relationship="Self.FK_Profile_User" FromRole="Profile" ToRole="User" />
+        </EntityType>
+        <EntityType Name="Redes">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="user_id" Type="Int32" />
+          <Property Name="youtube" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="twitch" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="kick" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="twitter" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="tiktok" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="discord" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="instagram" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="facebook" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="User" Relationship="Self.FK_Redes_User" FromRole="Redes" ToRole="User" />
+        </EntityType>
+        <EntityType Name="Rol">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="description" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="User" Relationship="Self.FK_User_Rol" FromRole="Rol" ToRole="User" />
+        </EntityType>
+        <EntityType Name="Type_Image">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="description" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="lastname" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="email" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="password" Type="String" MaxLength="60" FixedLength="false" Unicode="false" />
+          <Property Name="code" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="is_active" Type="Boolean" />
+          <Property Name="rol_id" Type="Int32" />
+          <Property Name="created_at" Type="DateTime" Precision="3" />
+          <Property Name="borrado" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Profile" Relationship="Self.FK_Profile_User" FromRole="User" ToRole="Profile" />
+          <NavigationProperty Name="Redes" Relationship="Self.FK_Redes_User" FromRole="User" ToRole="Redes" />
+          <NavigationProperty Name="Rol" Relationship="Self.FK_User_Rol" FromRole="User" ToRole="Rol" />
+          <NavigationProperty Name="User1_User2" Relationship="Self.FK_User1_User2_User" FromRole="User" ToRole="User1_User2" />
+          <NavigationProperty Name="User1_User21" Relationship="Self.FK_User1_User2_User1" FromRole="User" ToRole="User1_User2" />
+        </EntityType>
+        <EntityType Name="User1_User2">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="user1_id" Type="Int32" />
+          <Property Name="user2_id" Type="Int32" />
+          <Property Name="created_at" Type="DateTime" Precision="3" />
+          <Property Name="borrado" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="User" Relationship="Self.FK_User1_User2_User" FromRole="User1_User2" ToRole="User" />
+          <NavigationProperty Name="User1" Relationship="Self.FK_User1_User2_User1" FromRole="User1_User2" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_Profile_Image">
+          <End Role="Image" Type="Self.Image" Multiplicity="0..1" />
+          <End Role="Profile" Type="Self.Profile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Image">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Profile">
+              <PropertyRef Name="image_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Profile_Profile">
+          <End Role="Profile" Type="Self.Profile" Multiplicity="1" />
+          <End Role="Profile1" Type="Self.Profile" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Profile">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Profile1">
+              <PropertyRef Name="id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Profile_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Profile" Type="Self.Profile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Profile">
+              <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Redes_User">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="Redes" Type="Self.Redes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Redes">
+              <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_Rol">
+          <End Role="Rol" Type="Self.Rol" Multiplicity="0..1" />
+          <End Role="User" Type="Self.User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Rol">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="User">
+              <PropertyRef Name="rol_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User1_User2_User">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="User1_User2" Type="Self.User1_User2" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="User1_User2">
+              <PropertyRef Name="user1_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User1_User2_User1">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="User1_User2" Type="Self.User1_User2" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="User1_User2">
+              <PropertyRef Name="user2_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="DbConexion" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Image" EntityType="Self.Image" />
+          <EntitySet Name="Profile" EntityType="Self.Profile" />
+          <EntitySet Name="Redes" EntityType="Self.Redes" />
+          <EntitySet Name="Rol" EntityType="Self.Rol" />
+          <EntitySet Name="Type_Image" EntityType="Self.Type_Image" />
+          <EntitySet Name="User" EntityType="Self.User" />
+          <EntitySet Name="User1_User2" EntityType="Self.User1_User2" />
+          <AssociationSet Name="FK_Profile_Image" Association="Self.FK_Profile_Image">
+            <End Role="Image" EntitySet="Image" />
+            <End Role="Profile" EntitySet="Profile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Profile_Profile" Association="Self.FK_Profile_Profile">
+            <End Role="Profile" EntitySet="Profile" />
+            <End Role="Profile1" EntitySet="Profile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Profile_User" Association="Self.FK_Profile_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="Profile" EntitySet="Profile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Redes_User" Association="Self.FK_Redes_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="Redes" EntitySet="Redes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_Rol" Association="Self.FK_User_Rol">
+            <End Role="Rol" EntitySet="Rol" />
+            <End Role="User" EntitySet="User" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User1_User2_User" Association="Self.FK_User1_User2_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="User1_User2" EntitySet="User1_User2" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User1_User2_User1" Association="Self.FK_User1_User2_User1">
+            <End Role="User" EntitySet="User" />
+            <End Role="User1_User2" EntitySet="User1_User2" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ModelStoreContainer" CdmEntityContainer="DbConexion">
+          <EntitySetMapping Name="Image">
+            <EntityTypeMapping TypeName="Model.Image">
+              <MappingFragment StoreEntitySet="Image">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="src" ColumnName="src" />
+                <ScalarProperty Name="type" ColumnName="type" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
+                <ScalarProperty Name="borrado" ColumnName="borrado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Profile">
+            <EntityTypeMapping TypeName="Model.Profile">
+              <MappingFragment StoreEntitySet="Profile">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="day_of_birth" ColumnName="day_of_birth" />
+                <ScalarProperty Name="phone" ColumnName="phone" />
+                <ScalarProperty Name="title" ColumnName="title" />
+                <ScalarProperty Name="bio" ColumnName="bio" />
+                <ScalarProperty Name="public_email" ColumnName="public_email" />
+                <ScalarProperty Name="image_id" ColumnName="image_id" />
+                <ScalarProperty Name="redes_id" ColumnName="redes_id" />
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
+                <ScalarProperty Name="borrado" ColumnName="borrado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Redes">
+            <EntityTypeMapping TypeName="Model.Redes">
+              <MappingFragment StoreEntitySet="Redes">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
+                <ScalarProperty Name="youtube" ColumnName="youtube" />
+                <ScalarProperty Name="twitch" ColumnName="twitch" />
+                <ScalarProperty Name="kick" ColumnName="kick" />
+                <ScalarProperty Name="twitter" ColumnName="twitter" />
+                <ScalarProperty Name="tiktok" ColumnName="tiktok" />
+                <ScalarProperty Name="discord" ColumnName="discord" />
+                <ScalarProperty Name="instagram" ColumnName="instagram" />
+                <ScalarProperty Name="facebook" ColumnName="facebook" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Rol">
+            <EntityTypeMapping TypeName="Model.Rol">
+              <MappingFragment StoreEntitySet="Rol">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="description" ColumnName="description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Type_Image">
+            <EntityTypeMapping TypeName="Model.Type_Image">
+              <MappingFragment StoreEntitySet="Type_Image">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="description" ColumnName="description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="User">
+            <EntityTypeMapping TypeName="Model.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="lastname" ColumnName="lastname" />
+                <ScalarProperty Name="username" ColumnName="username" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="code" ColumnName="code" />
+                <ScalarProperty Name="is_active" ColumnName="is_active" />
+                <ScalarProperty Name="rol_id" ColumnName="rol_id" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="borrado" ColumnName="borrado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="User1_User2">
+            <EntityTypeMapping TypeName="Model.User1_User2">
+              <MappingFragment StoreEntitySet="User1_User2">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="user1_id" ColumnName="user1_id" />
+                <ScalarProperty Name="user2_id" ColumnName="user2_id" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="borrado" ColumnName="borrado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

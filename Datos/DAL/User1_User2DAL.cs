@@ -1,4 +1,5 @@
-﻿using Modelo.Modelos;
+﻿using Comun.ViewModels;
+using Modelo.Modelos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,7 +56,7 @@ namespace Datos.DAL
             }
         }
 
-        public static long Crear(int user_remitente_id, int user_receptor_id)
+        public static ResultDetail Crear(int user_remitente_id, int user_receptor_id)
         {
             using (var db = DbConexion.Create())
             {
@@ -69,7 +70,11 @@ namespace Datos.DAL
                     if (!existeFollow.borrado)
                     {
                         // Seguimiento ya activo, devolver el ID
-                        return existeFollow.id;
+                        return new ResultDetail
+                        {
+                            Id = existeFollow.id,
+                            Mensaje = "El seguimiento ya existe y está activo."
+                        };
                     }
                     else
                     {
@@ -77,7 +82,11 @@ namespace Datos.DAL
                         existeFollow.borrado = false;
                         db.Entry(existeFollow).State = System.Data.Entity.EntityState.Modified;
                         db.SaveChanges();
-                        return existeFollow.id;
+                        return new ResultDetail
+                        {
+                            Id = existeFollow.id,
+                            Mensaje = "El seguimiento fue reactivado."
+                        };
                     }
                 }
 
@@ -91,7 +100,11 @@ namespace Datos.DAL
                 };
                 db.User1_User2.Add(nuevoSeguimiento);
                 db.SaveChanges();
-                return nuevoSeguimiento.id;
+                return new ResultDetail
+                {
+                    Id = nuevoSeguimiento.id,
+                    Mensaje = "Nuevo seguimiento creado."
+                };
             }
         }
 

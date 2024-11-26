@@ -79,8 +79,10 @@ namespace WebAPI.Controllers
                     return Content(respuesta.codigo, respuesta);
                 }
 
-                respuesta.datos = User1_User2BLL.Crear(user_remitente_id, user_receptor_id);
+                var resultado = User1_User2BLL.Crear(user_remitente_id, user_receptor_id);
 
+                respuesta.datos = resultado.Id;
+                respuesta.mensajes.Add(resultado.Mensaje);
 
             }
             catch (Exception e)
@@ -101,7 +103,10 @@ namespace WebAPI.Controllers
 
             try
             {
-                respuesta.datos = User1_User2BLL.Crear(user_remitente_id, user_receptor_id);
+                var resultado = User1_User2BLL.Crear(user_remitente_id, user_receptor_id);
+
+                respuesta.datos = resultado.Id;
+                respuesta.mensajes.Add(resultado.Mensaje);
             }
             catch (Exception e)
             {

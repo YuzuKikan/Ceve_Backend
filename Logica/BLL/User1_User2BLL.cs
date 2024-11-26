@@ -21,7 +21,7 @@ namespace Logica.BLL
             return User1_User2DAL.CantSeguidores(userId);
         }
 
-        public static long Crear(int user_remitente_id, int user_receptor_id)
+        public static ResultDetail Crear(int user_remitente_id, int user_receptor_id)
         {
             return User1_User2DAL.Crear(user_remitente_id, user_receptor_id);
         }

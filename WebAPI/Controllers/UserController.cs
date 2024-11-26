@@ -225,15 +225,72 @@ namespace WebAPI.Controllers
         /* #########################################################################
             #########################################################################
             ######################################################################### */
-        [HttpPut]
-        [Route("api/user/{userId}/rol/{nuevoRolId}/moderator/{rolModeradorId}")]
-        public IHttpActionResult ActualizarRol(int userId, int nuevoRolId, int rolModeradorId)
+        [HttpGet]
+        [Route("api/user/rol/{userId}")]
+        public IHttpActionResult ActualizarRol(int userId)
         {
             var respuesta = new RespuestaVMR<bool>();
 
             try
             {
-                UserBLL.ActualizarRol(userId, nuevoRolId, rolModeradorId);
+                // Llamar al método de la capa de negocio para actualizar el rol
+                UserBLL.ActualizarRol(userId);
+                respuesta.datos = true;
+                respuesta.mensajes.Add("Rol actualizado correctamente.");
+            }
+            catch (Exception e)
+            {
+                // Manejar errores y retornar los mensajes adecuados
+                respuesta.codigo = HttpStatusCode.InternalServerError;
+                respuesta.datos = false;
+                respuesta.mensajes.Add(e.Message);
+                respuesta.mensajes.Add(e.ToString());
+            }
+
+            return Content(respuesta.codigo, respuesta);
+        }
+
+        [HttpGet]
+        [Route("api/user/rol/{userId}/{userModId}")]
+        public IHttpActionResult ActualizarRolAutorizado(int userId, int userModId)
+        {
+            var respuesta = new RespuestaVMR<bool>();
+
+            try
+            {
+                if (userId == userModId)
+                {
+                    respuesta.codigo = HttpStatusCode.BadRequest;
+                    respuesta.datos = false;
+                    respuesta.mensajes.Add("No está permitido cambiar su propio rol");
+                    return Content(respuesta.codigo, respuesta);
+                }
+                // Llamar al método de la capa de negocio para actualizar el rol
+                UserBLL.ActualizarRolAutorizado(userId, userModId);
+                respuesta.datos = true;
+                respuesta.mensajes.Add("Rol actualizado correctamente.");
+            }
+            catch (Exception e)
+            {
+                // Manejar errores y retornar los mensajes adecuados
+                respuesta.codigo = HttpStatusCode.InternalServerError;
+                respuesta.datos = false;
+                respuesta.mensajes.Add(e.Message);
+                respuesta.mensajes.Add(e.ToString());
+            }
+
+            return Content(respuesta.codigo, respuesta);
+        }
+
+        [HttpPut]
+        [Route("api/user/{userId}/rol/{nuevoRolId}/moderator/{rolModeradorId}")]
+        public IHttpActionResult ActualizarRol2(int userId, int nuevoRolId, int rolModeradorId)
+        {
+            var respuesta = new RespuestaVMR<bool>();
+
+            try
+            {
+                // UserBLL.ActualizarRol(userId, nuevoRolId, rolModeradorId);
                 respuesta.datos = true;
             }
             catch (Exception e)

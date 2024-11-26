@@ -36,5 +36,10 @@ namespace Logica.BLL
         {
             User1_User2DAL.Eliminar(user_remitente_id, user_receptor_id);
         }
+
+        public static bool EliminarBool(int user_remitente_id, int user_receptor_id)
+        {
+            return User1_User2DAL.EliminarBool(user_remitente_id, user_receptor_id);
+        }
     }
 }

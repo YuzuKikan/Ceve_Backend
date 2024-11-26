@@ -36,9 +36,13 @@ namespace Logica.BLL
         {
             UserDAL.Actualizar(item);
         }
-        public static void ActualizarRol(int userId, int nuevoRolId, int rolModeradorId)
+        public static void ActualizarRol(int userId)
         {
-            UserDAL.ActualizarRol(userId, nuevoRolId, rolModeradorId);
+            UserDAL.ActualizarRol(userId);
+        }
+        public static void ActualizarRolAutorizado(int userId, int userModId)
+        {
+            UserDAL.ActualizarRolAutorizado(userId, userModId);
         }
         public static void Eliminar(List<long> ids)
         {

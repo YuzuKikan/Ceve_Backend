@@ -56,6 +56,7 @@ namespace Datos.DAL
             }
         }
 
+        // Crear ahora realiza comprobaciones de => Existencia y Control de estado a positivo
         public static ResultDetail Crear(int user_remitente_id, int user_receptor_id)
         {
             using (var db = DbConexion.Create())
@@ -148,18 +149,42 @@ namespace Datos.DAL
         {
             using (var db = DbConexion.Create())
             {
-                // Buscar si existe un seguimiento entre el usuario remitente y el receptor
                 var seguimiento = db.User1_User2.FirstOrDefault(x => x.user1_id == user_remitente_id && x.user2_id == user_receptor_id);
 
                 if (seguimiento != null)
                 {
-                    // Si el seguimiento existe, se cambia el estado de borrado a true
                     seguimiento.borrado = true;
                     db.Entry(seguimiento).State = System.Data.Entity.EntityState.Modified;
                     db.SaveChanges();
                 }
                 // Si ya está borrado, no se realiza nada
             }
+        }
+        // Acción de eliminar con resultados => state: bool
+        public static bool EliminarBool(int user_remitente_id, int user_receptor_id)
+        {
+            using (var db = DbConexion.Create())
+            {
+                // Buscar si existe un seguimiento entre el usuario remitente y el receptor
+                var seguimiento = db.User1_User2.FirstOrDefault(x => x.user1_id == user_remitente_id && x.user2_id == user_receptor_id);
+
+                if (seguimiento != null)
+                {
+                    if (seguimiento.borrado)
+                    {
+                        return false; // El seguimiento ya está borrado, no hacemos nada y retornamos false
+                    }
+                    // Si el seguimiento existe, se cambia el estado de borrado a true
+                    seguimiento.borrado = true;
+                    db.Entry(seguimiento).State = System.Data.Entity.EntityState.Modified;
+                    db.SaveChanges();
+
+                    return true; // Se realizó la eliminación
+                }
+                // Si ya está borrado, no se realiza nada
+            }
+            // Si no se encontró o no existió en primer logar
+            return false;
         }
 
     }

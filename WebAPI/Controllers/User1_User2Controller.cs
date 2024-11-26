@@ -143,7 +143,10 @@ namespace WebAPI.Controllers
             return Content(respuesta.codigo, respuesta);
         }
 
-        [HttpDelete]
+        /* #########################################################################
+#########################################################################
+######################################################################### */
+        [HttpGet]
         [Route("api/user1-user2/eliminar/{user_remitente_id}/{user_receptor_id}")]
         public IHttpActionResult Eliminar(int user_remitente_id, int user_receptor_id)
         {
@@ -153,6 +156,38 @@ namespace WebAPI.Controllers
             {
                 User1_User2BLL.Eliminar(user_remitente_id, user_receptor_id);
                 respuesta.datos = true;
+                respuesta.mensajes.Add("Seguimiento eliminado correctamente.");
+            }
+            catch (Exception e)
+            {
+                respuesta.codigo = HttpStatusCode.InternalServerError;
+                respuesta.datos = false;
+                respuesta.mensajes.Add(e.Message);
+                respuesta.mensajes.Add(e.ToString());
+            }
+            return Content(respuesta.codigo, respuesta);
+        }
+
+        [HttpGet]
+        [Route("api/user1-user2/eliminar2/{user_remitente_id}/{user_receptor_id}")]
+        public IHttpActionResult EliminarBool(int user_remitente_id, int user_receptor_id)
+        {
+            var respuesta = new RespuestaVMR<bool>();
+
+            try
+            {
+                bool eliminado = User1_User2BLL.EliminarBool(user_remitente_id, user_receptor_id);
+
+                if (eliminado)
+                {
+                    respuesta.datos = true;
+                    respuesta.mensajes.Add("Seguimiento eliminado correctamente.");
+                }
+                else
+                {
+                    respuesta.datos = false;
+                    respuesta.mensajes.Add("El seguimiento ya está eliminado.");
+                }
             }
             catch (Exception e)
             {

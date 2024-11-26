@@ -229,7 +229,7 @@ namespace Datos.DAL
             {
                 var itemUpdate = db.User.Find(item.id);
 
-                if(itemUpdate == null)
+                if (itemUpdate == null)
                 {
                     throw new Exception($"No se han introducido datos User a actualizar {item.id}");
                 }
@@ -257,21 +257,71 @@ namespace Datos.DAL
         }
 
         // el usuaraio === El id para sustituir === autenticar Moderador
-        public static void ActualizarRol(int userId, int nuevoRolId, int rolModeradorId)
+        public static void ActualizarRol(int userId)
         {
             using (var db = DbConexion.Create())
             {
                 var user = db.User.Find(userId);
 
-                if (user != null && rolModeradorId == 1)
+                if (user != null)
                 {
-                    user.rol_id = nuevoRolId;
+                    if (user.rol_id == 1)
+                    {
+                        user.rol_id = 2;
+                    }
+                    else if (user.rol_id == 2)
+                    {
+                        user.rol_id = 1;
+                    }
+
                     db.Entry(user).State = System.Data.Entity.EntityState.Modified;
                     db.SaveChanges();
                 }
                 else
                 {
-                    throw new UnauthorizedAccessException("Solo los moderadores pueden actualizar roles.");
+                    throw new Exception("Error al actualizar rol, el usuario no existe");
+                }
+            }
+        }
+
+        public static void ActualizarRolAutorizado(int userId, int userModId)
+        {
+            using (var db = DbConexion.Create())
+            {
+                var mod = db.User.Find(userModId);
+                var user = db.User.Find(userId);
+
+                if (mod != null)
+                {
+                    if (mod.rol_id != 2)
+                    {
+                        if (user != null)
+                        {
+                            if (user.rol_id == 1)
+                            {
+                                user.rol_id = 2;
+                            }
+                            else if (user.rol_id == 2)
+                            {
+                                user.rol_id = 1;
+                            }
+
+                            db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                            db.SaveChanges();
+                        }
+                        else
+                        {
+                            throw new Exception("Error al actualizar rol, el usuario no existe");
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Error, solo User Mod tiene autorización");
+                    }
+                }
+                else
+                {
+                    throw new Exception("Error, User Mod no existe");
                 }
             }
         }
@@ -296,7 +346,7 @@ namespace Datos.DAL
         private static string GenerarCodigoAleatorio()
         {
             Random random = new Random();
-            return random.Next(10000000, 99999999).ToString();
+            return random.Next(0, 99999999).ToString("D8");
         }
 
     }

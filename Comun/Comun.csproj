@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Enumeration\UserStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\EmailService.cs" />
     <Compile Include="ViewModels\ImageVMR.cs" />
     <Compile Include="ViewModels\ListadoPaginadoVMR.cs" />
     <Compile Include="ViewModels\ProfileVMR.cs" />

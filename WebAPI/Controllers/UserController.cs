@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Mail;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
@@ -347,6 +348,50 @@ namespace WebAPI.Controllers
                 respuesta.datos = false;
                 respuesta.mensajes.Add(e.Message);
             }
+            return Content(respuesta.codigo, respuesta);
+        }
+
+        [HttpGet]
+        [Route("api/user/enviar/{email}/{code}")]
+        public IHttpActionResult EnviarCodigoEmail(string email, string code)
+        {
+            var respuesta = new RespuestaVMR<bool>();
+
+            try
+            {
+                string EmailOrigen = "remusalbertoiorga@gmail.com";
+                string EmailDestino = email;
+                string Contraseña = "aion pbou kduj ijed"; // contraseña de aplicación, generada para el correo por Google
+
+                // Crear el mensaje de correo
+                MailMessage mailMessage = new MailMessage(EmailOrigen, EmailDestino, "Código de confimación", $"Se le ha enviado el siguiente código: {code}");
+                mailMessage.IsBodyHtml = true;
+
+                // Configurar el cliente SMTP
+                SmtpClient smtp = new SmtpClient("smtp.gmail.com");
+                smtp.EnableSsl = true;
+                smtp.UseDefaultCredentials = true;
+                // smtp.Host = "smtp-gmail.com";
+                smtp.Port = 587;
+                smtp.Credentials = new System.Net.NetworkCredential(EmailOrigen, Contraseña);
+
+                smtp.Send(mailMessage);
+
+                smtp.Dispose();
+
+                // Si el correo se envía correctamente, establecemos la respuesta
+                respuesta.codigo = HttpStatusCode.OK;
+                respuesta.datos = true;
+                respuesta.mensajes.Add("Código de recuperación enviado correctamente.");
+            }
+            catch (Exception ex)
+            {
+                // Si ocurre un error, capturamos la excepción y la devolvemos
+                respuesta.codigo = HttpStatusCode.InternalServerError;
+                respuesta.datos = false;
+                respuesta.mensajes.Add($"Error al enviar el correo: {ex.Message}");
+            }
+
             return Content(respuesta.codigo, respuesta);
         }
 

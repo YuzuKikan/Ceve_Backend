@@ -9,16 +9,17 @@ namespace Comun.Service
 {
     public class EmailService
     {
-        public static bool EnviarCodigoEmail(string email, string code)
+        public static string EnviarCodigoEmail(string email)
         {
             try
             {
                 string EmailOrigen = "remusalbertoiorga@gmail.com";
                 string EmailDestino = email;
                 string Contraseña = "aion pbou kduj ijed"; // contraseña de aplicación, generada para el correo por Google
+                string newCode = CodeService.GenerarCodigoAleatorio();
 
                 // Crear el mensaje de correo
-                MailMessage mailMessage = new MailMessage(EmailOrigen, EmailDestino, "Código de confimación", $"Se le ha enviado el siguiente código: {code}");
+                MailMessage mailMessage = new MailMessage(EmailOrigen, EmailDestino, "Código de confimación", $"Se le ha enviado el siguiente código: {newCode}");
                 mailMessage.IsBodyHtml = true;
 
                 // Configurar el cliente SMTP
@@ -33,11 +34,11 @@ namespace Comun.Service
 
                 smtp.Dispose();
 
-                return true; // Indicar que el correo se envió correctamente
+                return newCode; // Indicar que el correo se envió correctamente [se ha generado CODE y retorna String]
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return false; // Indicar que hubo un error
+                return null; // Indicar que hubo un error [no se ha generado CODE]
             }
 
         }

@@ -1,4 +1,5 @@
 ﻿using Comun.Enumeration;
+using Comun.Service;
 using Comun.ViewModels;
 using Modelo.Modelos;
 using System;
@@ -108,6 +109,40 @@ namespace Datos.DAL
             }
         }
 
+        public static UserStatus VerificarEmailCode(string email, string code)
+        {
+            using (var db = DbConexion.Create())
+            {
+                var usuario = db.User.FirstOrDefault(x => x.email == email);
+
+                if (usuario != null)
+                {
+                    if (usuario.code == code)
+                    {
+                        return UserStatus.UsuarioValido;
+                    }
+                    return UserStatus.CodeIncorrecta;
+                }
+                return UserStatus.UsuarioNoEncontrado;
+            }
+        }
+
+        public static UserStatus VerificarEmail(string email)
+        {
+            using (var db = DbConexion.Create())
+            {
+                var usuario = db.User.FirstOrDefault(x => x.email == email);
+
+                if (usuario != null)
+                {
+                    var code = EmailService.EnviarCodigoEmail(email);
+                    ActualizarCode(email, code);
+                    return UserStatus.UsuarioValido;
+                }
+                return UserStatus.UsuarioNoEncontrado;
+            }
+        }
+
         public static UserVMR ObtenerUsuarioPorCredenciales(string email, string password)
         {
             UserVMR item = null;
@@ -150,7 +185,7 @@ namespace Datos.DAL
                             username = !string.IsNullOrEmpty(item.username) ? item.username : "",
                             email = item.email,// este es Requerido 
                             password = item.password, // este es Requerido
-                            code = GenerarCodigoAleatorio(), // redordar que code admite string(20)
+                            code = CodeService.GenerarCodigoAleatorio(), // redordar que code admite string(20)
                             is_active = true, // hay que ponerlo de forma predeterminada el yes
                             rol_id = rolId ?? 2, // Si no se especifica, se usa 2 por defecto
                             created_at = DateTime.Now,
@@ -222,7 +257,7 @@ namespace Datos.DAL
             }
         }
 
-        // Funciones para actualizar ROL USER 
+        // Funciones para actualizar USER 
         public static void Actualizar(UserVMR item)
         {
             using (var db = DbConexion.Create())
@@ -325,6 +360,46 @@ namespace Datos.DAL
                 }
             }
         }
+
+        public static void ActualizarCode(string email, string code)
+        {
+            using (var db = DbConexion.Create())
+            {
+                var user = db.User.FirstOrDefault(x => x.email == email);
+
+                if (user != null)
+                {
+                    user.code = code;
+                }
+                else
+                {
+                    throw new Exception("El usuario no existe.");
+                }
+                db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                db.SaveChanges();
+            }
+        }
+
+        public static void ActualizarPassword(string email, string code, string newPassword)
+        {
+            using (var db = DbConexion.Create())
+            {
+                var user = db.User.FirstOrDefault(x => x.email == email && x.code == code);
+
+                if (user != null)
+                {
+                    user.password = newPassword;
+                    user.code = "00000000";
+                }
+                else
+                {
+                    throw new Exception("El usuario no existe o correo incorrecto.");
+                }
+                db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                db.SaveChanges();
+            }
+        }
+
         // Funciones de ELIMINADO
         public static void Eliminar(List<long> ids)
         {
@@ -341,13 +416,5 @@ namespace Datos.DAL
                 db.SaveChanges();
             }
         }
-
-        // Función externa para generar un código aleatorio de 8 cifras
-        private static string GenerarCodigoAleatorio()
-        {
-            Random random = new Random();
-            return random.Next(0, 99999999).ToString("D8");
-        }
-
     }
 }

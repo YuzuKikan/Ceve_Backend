@@ -13,6 +13,7 @@ namespace Comun.Enumeration
         //ValidUser
         UsuarioNoEncontrado,
         ContraseñaIncorrecta,
-        UsuarioValido
+        UsuarioValido,
+        CodeIncorrecta
     }
 }

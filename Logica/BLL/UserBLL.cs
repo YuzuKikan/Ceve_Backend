@@ -24,6 +24,14 @@ namespace Logica.BLL
         {
             return UserDAL.ExisteUsuario(email, password);
         }
+        public static UserStatus VerificarEmailCode(string email, string code)
+        {
+            return UserDAL.VerificarEmailCode(email, code);
+        }
+        public static UserStatus VerificarEmail(string email)
+        {
+            return UserDAL.VerificarEmail(email);
+        }
         public static UserVMR ObtenerUsuarioPorCredenciales(string email, string password)
         {
             return UserDAL.ObtenerUsuarioPorCredenciales(email, password);
@@ -43,6 +51,14 @@ namespace Logica.BLL
         public static void ActualizarRolAutorizado(int userId, int userModId)
         {
             UserDAL.ActualizarRolAutorizado(userId, userModId);
+        }
+        public static void ActualizarCode(string email, string code)
+        {
+            UserDAL.ActualizarCode(email, code);
+        }
+        public static void ActualizarPassword(string email, string code, string password)
+        {
+            UserDAL.ActualizarPassword(email, code, password);
         }
         public static void Eliminar(List<long> ids)
         {

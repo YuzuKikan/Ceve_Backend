@@ -1,4 +1,5 @@
 ﻿using Comun.Enumeration;
+using Comun.Service;
 using Comun.ViewModels;
 using Logica.BLL;
 using Modelo.Modelos;
@@ -350,46 +351,103 @@ namespace WebAPI.Controllers
             }
             return Content(respuesta.codigo, respuesta);
         }
+        /* #########################################################################
+    #########################################################################
+    ######################################################################### */
+        [HttpGet]
+        [Route("api/user/verificarEmail/{email}/mail")]
+        public IHttpActionResult VarificarEmail(string email)
+        {
+            var respuesta = new RespuestaVMR<UserStatus>();
+
+            try
+            {
+                respuesta.datos = UserBLL.VerificarEmail(email);
+                respuesta.codigo = HttpStatusCode.OK;
+            }
+            catch (Exception e)
+            {
+                respuesta.codigo = HttpStatusCode.InternalServerError;
+                respuesta.mensajes.Add(e.Message);
+                respuesta.mensajes.Add(e.ToString());
+                return Content(respuesta.codigo, respuesta);
+            }
+            switch (respuesta.datos)
+            {
+                case UserStatus.UsuarioNoEncontrado:
+                    respuesta.codigo = HttpStatusCode.NotFound;
+                    respuesta.mensajes.Add("Usuario no encontrado.");
+                    break;
+
+                case UserStatus.UsuarioValido:
+                    respuesta.codigo = HttpStatusCode.OK;
+                    respuesta.mensajes.Add("Usuario válido.");
+                    break;
+            }
+            return Content(respuesta.codigo, respuesta);
+        }
 
         [HttpGet]
-        [Route("api/user/enviar/{email}/{code}")]
-        public IHttpActionResult EnviarCodigoEmail(string email, string code)
+        [Route("api/user/verificarEmailCode/{email}/{code}")]
+        public IHttpActionResult VerificarEmailCode(string email, string code)
+        {
+            var respuesta = new RespuestaVMR<UserStatus>();
+
+            try
+            {
+                respuesta.datos = UserBLL.VerificarEmailCode(email, code);
+                respuesta.codigo = HttpStatusCode.OK;
+            }
+            catch (Exception e)
+            {
+                respuesta.codigo = HttpStatusCode.InternalServerError;
+                respuesta.mensajes.Add(e.Message);
+                respuesta.mensajes.Add($"Error al enviar el correo: {e.Message}");
+            }
+            switch (respuesta.datos)
+            {
+                case UserStatus.UsuarioNoEncontrado:
+                    respuesta.codigo = HttpStatusCode.NotFound;
+                    respuesta.mensajes.Add("Usuario no encontrado.");
+                    break;
+
+                case UserStatus.CodeIncorrecta:
+                    respuesta.codigo = HttpStatusCode.Unauthorized;
+                    respuesta.mensajes.Add("Code incorrecta.");
+                    break;
+
+                case UserStatus.UsuarioValido:
+                    respuesta.codigo = HttpStatusCode.OK;
+                    respuesta.mensajes.Add("Código de recuperación ACEPTADO.");
+                    break;
+            }
+
+            return Content(respuesta.codigo, respuesta);
+        }
+
+        [HttpGet]
+        [Route("api/user/gestionarCuenta/{email}/{code}/{password}")]
+        public IHttpActionResult GestionarCuenta(string email, string code, string password)
         {
             var respuesta = new RespuestaVMR<bool>();
 
             try
             {
-                string EmailOrigen = "remusalbertoiorga@gmail.com";
-                string EmailDestino = email;
-                string Contraseña = "aion pbou kduj ijed"; // contraseña de aplicación, generada para el correo por Google
+                if (string.IsNullOrWhiteSpace(password))
+                {
+                    throw new Exception("La nueva contraseña no puede estar vacía o tenga espacios.");
+                }
+                UserBLL.ActualizarPassword(email, code, password);
 
-                // Crear el mensaje de correo
-                MailMessage mailMessage = new MailMessage(EmailOrigen, EmailDestino, "Código de confimación", $"Se le ha enviado el siguiente código: {code}");
-                mailMessage.IsBodyHtml = true;
-
-                // Configurar el cliente SMTP
-                SmtpClient smtp = new SmtpClient("smtp.gmail.com");
-                smtp.EnableSsl = true;
-                smtp.UseDefaultCredentials = true;
-                // smtp.Host = "smtp-gmail.com";
-                smtp.Port = 587;
-                smtp.Credentials = new System.Net.NetworkCredential(EmailOrigen, Contraseña);
-
-                smtp.Send(mailMessage);
-
-                smtp.Dispose();
-
-                // Si el correo se envía correctamente, establecemos la respuesta
                 respuesta.codigo = HttpStatusCode.OK;
                 respuesta.datos = true;
-                respuesta.mensajes.Add("Código de recuperación enviado correctamente.");
+                respuesta.mensajes.Add("Gestionar cuenta del usuario exitosa.");
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                // Si ocurre un error, capturamos la excepción y la devolvemos
                 respuesta.codigo = HttpStatusCode.InternalServerError;
                 respuesta.datos = false;
-                respuesta.mensajes.Add($"Error al enviar el correo: {ex.Message}");
+                respuesta.mensajes.Add($"Error al gestionar la cuenta: {e.Message}");
             }
 
             return Content(respuesta.codigo, respuesta);

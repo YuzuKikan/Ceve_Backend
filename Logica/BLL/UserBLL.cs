@@ -64,5 +64,13 @@ namespace Logica.BLL
         {
             UserDAL.Eliminar(ids);
         }
+        public static void ResetTotal(List<long> ids)
+        {
+            UserDAL.ResetTotal(ids);
+        }
+        public static void RestoreTotal(List<long> ids)
+        {
+            UserDAL.RestoreTotal(ids);
+        }
     }
 }

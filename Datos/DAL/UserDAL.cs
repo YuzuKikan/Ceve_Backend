@@ -416,5 +416,116 @@ namespace Datos.DAL
                 db.SaveChanges();
             }
         }
+
+        public static void ResetTotal(List<long> ids)
+        {
+            using (var db = DbConexion.Create())
+            {
+                var perfiles = db.Profile.Where(x => ids.Contains(x.user_id));
+                foreach (var perfil in perfiles)
+                {
+                    perfil.borrado = true;
+                    db.Entry(perfil).State = System.Data.Entity.EntityState.Modified;
+                }
+
+                var images = db.Image.Where(x => x.user_id.HasValue && ids.Contains(x.user_id.Value));
+                foreach (var image in images)
+                {
+                    image.borrado = true;
+                    db.Entry(image).State = System.Data.Entity.EntityState.Modified;
+                }
+
+                var items = db.User.Where(x => ids.Contains(x.id));
+                foreach (var item in items)
+                {
+                    ResetCont(item.id);
+                    item.borrado = true;
+                    db.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                }
+
+                db.SaveChanges();
+            }
+        }
+
+        public static void RestoreTotal(List<long> ids)
+        {
+            using (var db = DbConexion.Create())
+            {
+                var users = db.User.Where(x => ids.Contains(x.id) && x.borrado);
+                foreach (var user in users)
+                {
+                    RestoreCont(user.id);
+                    user.borrado = false;
+                    db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                }
+
+                var images = db.Image.Where(x => x.user_id.HasValue && ids.Contains(x.user_id.Value) && x.borrado);
+                foreach (var image in images)
+                {
+                    image.borrado = false;
+                    db.Entry(image).State = System.Data.Entity.EntityState.Modified;
+                }
+
+                var perfiles = db.Profile.Where(x => ids.Contains(x.user_id) && x.borrado);
+                foreach (var perfil in perfiles)
+                {
+                    perfil.borrado = false;
+                    db.Entry(perfil).State = System.Data.Entity.EntityState.Modified;
+                }
+
+                db.SaveChanges();
+            }
+        }
+
+        public static void ResetCont(int userId)
+        {
+            using (var db = DbConexion.Create())
+            {
+                // Buscar todas las relaciones donde el usuario es user1_id o user2_id
+                var relaciones = db.User1_User2.Where(x => x.user1_id == userId || x.user2_id == userId);
+
+                foreach (var relacion in relaciones)
+                {
+                    relacion.borrado = true;
+                    db.Entry(relacion).State = System.Data.Entity.EntityState.Modified;
+                }
+
+                db.SaveChanges();
+            }
+        }
+
+        public static void RestoreCont(int userId)
+        {
+            using (var db = DbConexion.Create())
+            {
+                // Buscar todas las relaciones donde el usuario es user1_id y esté borrado
+                var columUser1 = db.User1_User2.Where(x => x.user1_id == userId && x.borrado).ToList();
+
+                foreach (var relation in columUser1)
+                {
+                    var user2 = db.User.Find(relation.user2_id);
+                    if (user2 != null && !user2.borrado) // buscar todas las relaciones donde el user2 existe y no esté borrado
+                    {
+                        relation.borrado = false;
+                        db.Entry(relation).State = System.Data.Entity.EntityState.Modified;
+                    }
+                }
+
+                var columUser2 = db.User1_User2.Where(x => x.user2_id == userId && x.borrado).ToList();
+
+                foreach (var relation in columUser2)
+                {
+                    var user1 = db.User.Find(relation.user1_id);
+                    if (user1 != null && !user1.borrado)
+                    {
+                        relation.borrado = false;
+                        db.Entry(relation).State = System.Data.Entity.EntityState.Modified;
+                    }
+                }
+
+                // Guardar los cambios en la base de datos
+                db.SaveChanges();
+            }
+        }
     }
 }

@@ -91,6 +91,15 @@ namespace Datos.DAL
                     }
                 }
 
+                // Verificar si hay registro del User
+                var remitente = db.User.Find(user_remitente_id);
+                var receptor = db.User.Find(user_receptor_id);
+
+                if (remitente == null) { throw new Exception($"El usuario remitente con ID {user_remitente_id} no existe."); }
+                if (remitente.borrado) { throw new Exception($"El usuario remitente con ID {user_remitente_id} está eliminado."); }
+                if (receptor == null) { throw new Exception($"El usuario remitente con ID {user_receptor_id} no existe."); }
+                if (receptor.borrado) { throw new Exception($"El usuario remitente con ID {user_receptor_id} está eliminado."); }
+
                 // Si no existe un seguimiento, crear uno nuevo
                 var nuevoSeguimiento = new User1_User2
                 {

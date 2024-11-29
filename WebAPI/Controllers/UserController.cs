@@ -327,6 +327,51 @@ namespace WebAPI.Controllers
             }
             return Content(respuesta.codigo, respuesta);
         }
+
+        [HttpGet]
+        [Route("api/user/reset")]
+        public IHttpActionResult ResetTotal(List<long> ids)
+        {
+            var respuesta = new RespuestaVMR<bool>();
+
+            try
+            {
+                UserBLL.ResetTotal(ids);
+                respuesta.datos = true;
+                respuesta.mensajes.Add("Borrado lógico realizado correctamente.");
+            }
+            catch (Exception e)
+            {
+                respuesta.codigo = HttpStatusCode.InternalServerError;
+                respuesta.datos = false;
+                respuesta.mensajes.Add(e.Message);
+                respuesta.mensajes.Add(e.ToString());
+            }
+
+            return Content(respuesta.codigo, respuesta);
+        }
+        [HttpGet]
+        [Route("api/user/restore")]
+        public IHttpActionResult RestoreTotal(List<long> ids)
+        {
+            var respuesta = new RespuestaVMR<bool>();
+
+            try
+            {
+                UserBLL.RestoreTotal(ids);
+                respuesta.datos = true;
+                respuesta.mensajes.Add("Recuperación lógica-realacional realizado correctamente.");
+            }
+            catch (Exception e)
+            {
+                respuesta.codigo = HttpStatusCode.InternalServerError;
+                respuesta.datos = false;
+                respuesta.mensajes.Add(e.Message);
+                respuesta.mensajes.Add(e.ToString());
+            }
+
+            return Content(respuesta.codigo, respuesta);
+        }
         /* #########################################################################
             #########################################################################
             ######################################################################### */
@@ -356,7 +401,7 @@ namespace WebAPI.Controllers
     ######################################################################### */
         [HttpGet]
         [Route("api/user/verificarEmail/{email}/mail")]
-        public IHttpActionResult VarificarEmail(string email)
+        public IHttpActionResult VerificarEmail(string email)
         {
             var respuesta = new RespuestaVMR<UserStatus>();
 

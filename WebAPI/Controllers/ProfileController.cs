@@ -56,7 +56,7 @@ namespace WebAPI.Controllers
             }
             return Content(respuesta.codigo, respuesta);
         }
-        [HttpPut]
+        [HttpGet]
         [Route("api/profile/actualizar/{id}")]
         public IHttpActionResult Actualizar(int id, ProfileVMR item)
         {
@@ -64,9 +64,10 @@ namespace WebAPI.Controllers
 
             try
             {
-                item.id = id;
+                item.user_id = id;
                 ProfileBLL.Actualizar(item);
                 respuesta.datos = true;
+                respuesta.mensajes.Add("Perfil actualizado correctamente.");
             }
             catch (Exception e)
             {
@@ -77,7 +78,7 @@ namespace WebAPI.Controllers
             }
             return Content(respuesta.codigo, respuesta);
         }
-        [HttpDelete]
+        [HttpGet]
         [Route("api/profile/eliminar")]
         public IHttpActionResult Eliminar(List<long> ids)
         {

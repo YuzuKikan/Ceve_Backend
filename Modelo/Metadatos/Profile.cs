@@ -15,17 +15,17 @@ namespace Modelo.Modelos
     {
         public Nullable<System.DateTime> day_of_birth { get; set; }
 
-        [StringLength(10)]
+        [Range(100000000, 999999999, ErrorMessage = "El número de teléfono debe tener 9 dígitos.")]
         public Nullable<int> phone { get; set; }
 
-        [StringLength(255)]
+        [StringLength(255, ErrorMessage = "El título no debe superar los 255 caracteres.")]
         public string title { get; set; }
 
-        [StringLength(255)]
+        [StringLength(255, ErrorMessage = "La biografía no debe superar los 255 caracteres.")]
         public string bio { get; set; }
 
-        [EmailAddress]
-        [StringLength(255)]
+        [StringLength(255, ErrorMessage = "El campo Email no debe superar los 255 caracteres.")]
+        [EmailAddress(ErrorMessage = "El campo Email debe ser una dirección válida.")]
         public string public_email { get; set; }
 
         //[Required]
@@ -34,7 +34,7 @@ namespace Modelo.Modelos
         //[Required]
         public int redes_id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "El campo 'user_id' es obligatorio.")]
         public int user_id { get; set; }
 
     }

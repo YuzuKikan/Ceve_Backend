@@ -69,24 +69,30 @@ namespace Datos.DAL
         {
             using (var db = DbConexion.Create())
             {
-                var itemUpdate = db.Profile.Find(item.user_id);
+                var itemUpdate = db.Profile.FirstOrDefault(x => x.user_id == item.user_id);
+
+                if (itemUpdate == null)
+                {
+                    throw new Exception($"No se han introducido datos Profile a actualizar {item.id} --- {item.user_id}");
+                }
 
                 if (itemUpdate != null)
                 {
                     itemUpdate.day_of_birth = item.day_of_birth;
                     itemUpdate.phone = item.phone;
-                    itemUpdate.title = item.title;
-                    itemUpdate.bio = item.bio;
-                    itemUpdate.public_email = item.public_email;
-                    itemUpdate.image_id = item.image_id;
-                    itemUpdate.redes_id = item.redes_id;
+                    itemUpdate.title = item.title ?? string.Empty;
+                    itemUpdate.bio = item.bio ?? string.Empty;
+                    itemUpdate.public_email = item.public_email ?? string.Empty;
+                    itemUpdate.image_id = itemUpdate.image_id;
+                    itemUpdate.redes_id = itemUpdate.redes_id;
+                    itemUpdate.user_id = itemUpdate.user_id;
 
                     db.Entry(itemUpdate).State = System.Data.Entity.EntityState.Modified;
                     db.SaveChanges();
                 }
                 else
                 {
-                    throw new Exception("No se han introducido datos Profile a actualizar");
+                    throw new Exception($"No se han introducido datos Profile a actualizar {item.id} --- {item.user_id}");
                 }
             }
         }
@@ -97,21 +103,20 @@ namespace Datos.DAL
             {
                 // me aseguro que encuentro el usuario para seleccionar el profile
                 var items = db.Profile.Where(x => ids.Contains(x.user_id)).ToList();
-                // miro si hay profile disponibles a los que busco
-                if (items.Any())
+                
+                if (items.Count > 0)
                 {
                     foreach (var item in items)
                     {
                         item.borrado = true;
                         db.Entry(item).State = System.Data.Entity.EntityState.Modified;
                     }
-
                     db.SaveChanges();
                 }
                 else
                 {
                     // caso donde no encontramos coincidencia
-                    throw new Exception("No se encontraron perfiles con el ID");
+                    throw new Exception("No se encontraron perfiles con el ID's de usuarios");
                 }
 
                 db.SaveChanges();
